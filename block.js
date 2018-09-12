@@ -95,7 +95,7 @@ class Block {
   ) {
     const timestamp = Date.now();
     const nodeId = this.guid();
-
+    const childReferenceNodeId = [];
     return new this(
       timestamp,
       value,
@@ -104,7 +104,7 @@ class Block {
       nodeNumber,
       nodeId,
       referenceNodeId,
-      (childReferenceNodeId = null),
+      childReferenceNodeId,
       genesisReferenceNodeId
     );
   }

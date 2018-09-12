@@ -9,31 +9,40 @@ class Node {
   }
 
   createBlock(value, ownerName, ownerId) {
-    const parentReferenceId = null;
-    parentReferenceId = this.root.forEach(el => {
+    // let parent = null;
+    let block = this.root.forEach(el => {
       let sum = 0;
       el.childReferenceNodeId.forEach(ele => {
         sum += ele.value;
       });
-
       if (sum + value < el.value) {
-        return el.nodeId;
+        let referenceNodeId = el.nodeId;
+        let block = Block.createBlock(
+          value,
+          ownerName,
+          ownerId,
+          this.nodeNumber,
+          this.genesisReferenceNodeId,
+          referenceNodeId
+        );
+        this.root.push(block);
+        this.root[0].childReferenceNodeId.push(block.nodeId);
+        return block;
       }
     });
-    if (!parentReferenceId) {
-      parentReferenceId = this.root[0].nodeId;
-    }
+    // if (!parent) {
+    //   parent = this.root[0].nodeId;
+    // }
+  }
 
-    const block = Block.createBlock(
+  createBlockDontAdd(value, ownerName, ownerId) {
+    return Block.createBlock(
       value,
       ownerName,
       ownerId,
       this.nodeNumber,
-      this.genesisReferenceNodeId,
-      (referenceNodeId = parentReferenceId)
+      this.genesisReferenceNodeId
     );
-
-    this.addBlockToNode(block);
   }
 
   addBlockToNode(node, block) {
@@ -41,9 +50,7 @@ class Node {
     node.childReferenceNodeId.forEach(child => {
       sum += child.value;
     });
-    if (sum + block.value > parent.value) {
-      return 0;
-    } else {
+    if (sum + block.value < parent.value) {
       this.root.push(block);
       node.childReferenceNodeId.push(block.nodeId);
       return 1;
@@ -51,7 +58,7 @@ class Node {
   }
 
   findNode(value) {
-    const block = this.root.filter(block => {
+    let block = this.root.filter(block => {
       block.value == value;
     });
 
@@ -59,7 +66,7 @@ class Node {
   }
 
   verifyOwner(node, ownerName, key) {
-    const data = node.decrypthash(this.node.data, key);
+    let data = node.decrypthash(this.node.data, key);
     if (data.ownerName == ownerName) {
       return 1;
     } else {
@@ -69,5 +76,10 @@ class Node {
 }
 
 var a = new Node();
+var node1 = a.createBlock(30, "Ayush", 14);
+var node2 = a.createBlock(40, "Ayusch", 15);
+var node3 = a.createBlock(50, "Tarun", 16);
+console.log(a.root[0].childReferenceNodeId);
+a.addBlockToNode(node3, a.createBlockDontAdd());
 
 module.exports = Node;
